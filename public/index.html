@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Calculator</title>
+        <meta charset="utf-8" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+        <style>
+            div.calculations {
+                width: 90%;
+                margin: 8px auto;
+                border-radius: 5px;
+                border: 1px solid rgba(212,160,183, 1);
+                background-color: rgba(212,160,183, 0.6);
+            }
+            button.mybut {
+                width: 40px;
+                height: 40px;
+                padding: 0;
+                margin: 4px;
+                float: left;
+                font-size: 1.5em;
+            }
+            button.larwidth {
+                width: 88px;
+            }
+            button.larheight {
+                height: 88px;
+                float: right;
+            }
+            .bord, .inform {
+                min-width: 220px;
+            }
+            .bord {
+                margin: auto;
+                display: inline-block;
+                border: 1px solid rgba(188,187,186, 0.6);
+                background-color: rgba(188,187,186, 0.4);
+                border-radius: 10px;
+            }
+            .inform {
+                font-family: 'Pacifico', cursive;
+                font-size: 1.3em;
+            }
+            #buttons {
+                height: 210px;
+                width: 192px;
+                margin: 0 auto;
+            }
+            p {
+                margin-bottom: 0;
+                padding-left: 5px;
+            }
+            p.main {
+                height: 36px;
+                font-size: 1.6em;
+            }
+            p.history {
+                font-size: 1.0em;
+                height: 28px;
+                color: purple;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row mx-auto mt-3" id="calc">
+            </div>
+            <footer class="inform text-center my-3">
+                Coded by <a href="https://www.freecodecamp.com/sshal" target="_blank">Sergey Shalimov</a>
+            </footer>
+        </div>
+
+        <script src="js/main.js"></script>
+    </body>
+</html>
