@@ -20788,78 +20788,89 @@ var Calculator = function (_React$Component) {
 
         var _this = _possibleConstructorReturn(this, (Calculator.__proto__ || Object.getPrototypeOf(Calculator)).call(this, props));
 
-        _this.state = { curres: 0, value: "0", history: "" };
+        _this.value = "0";
+        _this.curres = 0;
+        _this.history = "";
+        _this.init = _this.init.bind(_this);
         _this.digits = _this.digits.bind(_this);
         _this.addZero = _this.addZero.bind(_this);
-        _this.clearAll = _this.clearAll.bind(_this);
-        _this.makeResult = _this.makeResult.bind(_this);
-        _this.operation = _this.operation.bind(_this);
         _this.addDot = _this.addDot.bind(_this);
+        _this.operation = _this.operation.bind(_this);
+        _this.makeResult = _this.makeResult.bind(_this);
         _this.check = _this.check.bind(_this);
         _this.clearSome = _this.clearSome.bind(_this);
         return _this;
     }
 
     _createClass(Calculator, [{
+        key: "init",
+        value: function init() {
+            this.value = "0";this.curres = 0;this.history = "";
+            this.setState({});
+        }
+    }, {
         key: "digits",
         value: function digits(e) {
-            var state = this.state,
-                curVal = e.target.value;
-            if (state.history.search(/=/) > -1 || state.value === "0" && state.history === "") {
-                state = { value: curVal, history: curVal, curres: 0 };
-            } else if (state.value.search(/[\+\-\*\/]/) > -1) {
-                state = { value: curVal, history: state.history + curVal };
-            } else if (this.state.value.search(/[\+\-\*\/]/) < 0) {
-                state = { value: state.value + curVal, history: state.history + curVal };
+            var curVal = e.target.value;
+            if (this.history.search(/=/) > -1) {
+                this.value = curVal;
+                this.history = "";
+            } else if (this.value === "0" || this.value.search(/[\+\-\*\/]/) > -1) {
+                this.value = curVal;
+            } else if (this.value.search(/[\+\-\*\/]/) < 0) {
+                this.value += curVal;
             }
-            this.setState(state, function () {
-                this.check();
-            });
+            this.check();
+            this.setState({});
         }
     }, {
         key: "addZero",
         value: function addZero(e) {
-            if (this.state.value.search(/[1-9\.]\d*$/) > -1 && this.state.history.search(/=/) < 0) {
-                this.setState({ value: this.state.value + "0", history: this.state.history + "0" }, function () {
-                    this.check();
-                });
+            if (this.value.search(/[1-9\.]\d*$/) > -1 && this.history.search(/=/) < 0) {
+                this.value += "0";
+                this.check();
+                this.setState({});
             }
         }
     }, {
         key: "addDot",
         value: function addDot() {
-            if (this.state.value.search(/\./) < 0) {
-                var state;
-                if (this.state.value.search(/[\+\-\*\/]/) > -1 || this.state.value === "0" || this.state.value === "") {
-                    state = { value: "0.", history: this.state.history + "0." };
-                } else {
-                    state = { value: this.state.value + ".", history: this.state.history + "." };
-                }
-                this.setState(state, function () {
-                    this.check();
-                });
+            if (this.value.search(/\./) < 0) {
+                this.value.search(/[\+\-\*\/]/) > -1 ? this.value = "0." : this.value += ".";
+                this.check();
+                this.setState({});
             }
         }
     }, {
         key: "operation",
         value: function operation(e) {
-            var hist = this.state.history;
-            if (hist.search(/=/) > -1) {
-                this.setState({ value: e.target.value, history: this.state.curres + e.target.value });
-            } else if ((!isNaN(Number.parseFloat(this.state.value)) || !/[\+\-\*\/!]/.test(hist.split("").pop())) && this.state.value !== "0") {
-                this.setState({ value: e.target.value, history: this.state.history + e.target.value });
+            var curVal = e.target.value;
+            if (this.history.search(/=/) > -1) {
+                this.value = curVal;
+                this.history = this.curres + curVal;
+            } else if (!isNaN(Number.parseFloat(this.value))) {
+                if (Number.parseFloat(this.value)) {
+                    this.history += this.value;
+                }
+                if (!/[\+\-\*\/!]/.test(this.history.split("").pop())) {
+                    this.value = curVal;
+                    this.history += curVal;
+                }
             }
+            this.setState({});
         }
     }, {
         key: "makeResult",
         value: function makeResult() {
-            var init = this.state.history;
-            if (init.search(/[\+\-\*\/]$|=/) < 0 && init !== "") {
-                var numbers = init.match(/(?:\d+\.\d+)|(?:\d+)/gi).map(function (a) {
+            if (!isNaN(Number.parseFloat(this.value))) {
+                this.history += this.value;
+            }
+            if (this.history.search(/[\+\-\*\/]$|=/) < 0 && this.history !== "") {
+                var numbers = this.history.match(/(?:\d+\.\d+)|(?:\d+)/gi).map(function (a) {
                     return Number.parseFloat(a);
                 });
-                var operations = init.match(/\+|\-|\*|\//g);
-                if (this.state.curres < 0) {
+                var operations = this.history.match(/\+|\-|\*|\//g);
+                if (this.curres < 0) {
                     numbers[0] *= -1;
                     operations.splice(0, 1);
                 }
@@ -20880,31 +20891,36 @@ var Calculator = function (_React$Component) {
                 });
                 result = !Number.isInteger(result) ? Math.round(result * 10000) / 10000 : result;
                 result = result.toString();
-                this.setState({ value: result, history: init + "=" + result, curres: result }, function () {
-                    this.check();
-                });
+                this.value = result;
+                this.history += "=" + result;
+                this.curres = result;
+                this.check();
+                this.setState({});
             }
         }
     }, {
         key: "check",
         value: function check() {
-            this.state.value.length > 8 || this.state.history.length > 20 ? this.setState({ curres: 0, value: "0", history: "Error! Digit Limit Met!" }) : -1;
+            if (this.value.length > 8 || this.history.length > 20) {
+                this.init();
+                this.history = "Error! Digit Limit Met!";
+            }
+            this.setState({});
         }
     }, {
         key: "clearSome",
         value: function clearSome() {
-            if (/=|[a-z]/.test(this.state.history) || this.state.value === "0" || this.state.value === "") {
-                this.clearAll();
+            if (this.history.search(/[\+\-\*\/]$/) > -1 && this.value.search(/[\+\-\*\/]/) > -1) {
+                this.value = "0";
+                this.history = this.history.split("").slice(0, -1).join("");
+            } else if (/=|[a-z]/.test(this.history) || this.value === "0") {
+                this.init();
+            } else if (this.value.length === 1) {
+                this.value = "0";
             } else {
-                var newValue = this.state.value.split("").slice(0, -1).join("");
-                var newHistory = this.state.history.split("").slice(0, -1).join("");
-                this.setState({ value: newValue, history: newHistory });
+                this.value = this.value.split("").slice(0, -1).join("");
             }
-        }
-    }, {
-        key: "clearAll",
-        value: function clearAll() {
-            this.setState({ curres: 0, value: "0", history: "" });
+            this.setState({});
         }
     }, {
         key: "render",
@@ -20918,12 +20934,12 @@ var Calculator = function (_React$Component) {
                     _react2.default.createElement(
                         "p",
                         { className: "mystin main" },
-                        this.state.value
+                        this.value
                     ),
                     _react2.default.createElement(
                         "p",
                         { className: "history" },
-                        this.state.history
+                        this.history
                     )
                 ),
                 _react2.default.createElement(
@@ -20931,7 +20947,7 @@ var Calculator = function (_React$Component) {
                     { className: "text-center", id: "buttons" },
                     _react2.default.createElement(
                         "button",
-                        { className: "btn btn-danger mybut", onClick: this.clearAll },
+                        { className: "btn btn-danger mybut", onClick: this.init },
                         "ac"
                     ),
                     _react2.default.createElement(
